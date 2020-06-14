@@ -83,6 +83,9 @@ class MBoard
 
 //==========================================
 
+    float vvv;
+    float iii;
+
     void setVoltage(float);
     void setCurrent(float);
 
@@ -102,13 +105,19 @@ class MBoard
     float getWiresResistance();
 
     float readVoltage( int ivalue );
-    float readVoltage0db( int ivalue );
+    //float readVoltage0db( int ivalue );
   
     //void runKeys();
     //void calcKeys(int ivalue);
 
-    void calcVoltage( float volt );
-    void calcCurrent( int ivalue );
+    //void calcVoltage( float volt );
+    void calcVoltage( int32_t mvolt );
+
+    //void calcCurrent( int ivalue );
+    void calcCurrent( int32_t mamper );
+
+
+
 
 //    void runCool();
 

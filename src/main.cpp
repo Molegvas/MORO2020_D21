@@ -7,8 +7,8 @@ date:     Июнь 2020
 
 #include "board/mboard.h"
 #include "board/moverseer.h"
-#include "wake/wake.h"
-#include "commands.h"
+//#include "driver/mwake.h"
+#include "driver/mcommands.h"
 #include "display/mdisplay.h"
 #include "mtools.h"
 #include "mdispatcher.h"
@@ -20,6 +20,7 @@ date:     Июнь 2020
 static MBoard      * Board      = 0;
 static MDisplay    * Display    = 0;
 static MTools      * Tools      = 0;
+static MCommands   * Commands   = 0;
 static MMeasure    * Measure    = 0;
 static MDispatcher * Dispatcher = 0;
 static MConnect    * Connect    = 0;
@@ -33,14 +34,15 @@ void driverTask  ( void * parameter );
 
 void setup()
 {
-  Serial1.begin(115200);           // это порт дрйвера
+  //wakeInit( 0x00, 50 );   // Адрес в сети и время ожидания ответа
 
-  Display   = new MDisplay();
-  Board = new MBoard(Display);
-  Tools = new MTools(Board, Display);
-  Measure = new MMeasure(Tools);
+  Display    = new MDisplay();
+  Board      = new MBoard(Display);
+  Tools      = new MTools(Board, Display);
+  Commands   = new MCommands(Board);
+  Measure    = new MMeasure(Tools);
   Dispatcher = new MDispatcher(Tools);
-  Connect = new MConnect(Tools);
+  Connect    = new MConnect(Tools);
 
   // Выделение ресурсов для каждой задачи: память, приоритет, ядро.
   // Все задачи исполняются ядром 1, ядро 0 выделено для радиочастотных задач - BT и WiFi.
@@ -147,14 +149,14 @@ void driverTask( void * parameter )
   while (true)
   {
     //unsigned long start = micros();
-    if( Serial1.available() )     // В буфере приема есть принятые байты, не факт, что пакет полный
-  {
-    wakeRead();                 // Пока не принят весь пакет, время ожидания ограничено (пока 1с)
-    #ifdef DEBUG_COMMANDS
-      //Serial.print(" -> 0x"); Serial.print(Serial1.read(), HEX); // !! очистит буфер !!
-    #endif
-  }
-    doCommand();
+  //   if( Serial1.available() )     // В буфере приема есть принятые байты, не факт, что пакет полный
+  // {
+  //   wakeRead();                 // Пока не принят весь пакет, время ожидания ограничено (пока 1с)
+  //   #ifdef DEBUG_COMMANDS
+  //     //Serial.print(" -> 0x"); Serial.print(Serial1.read(), HEX); // !! очистит буфер !!
+  //   #endif
+  // }
+    Commands->doCommand();
     //Serial.print(" Time, uS: "); Serial.println(micros() - start);
     // Core 1,  mkS
     vTaskDelay( 100 / portTICK_PERIOD_MS );

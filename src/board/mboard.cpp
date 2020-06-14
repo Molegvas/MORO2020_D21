@@ -166,27 +166,38 @@ float MBoard::readVoltage( int reading )
         + 0.034143524634089f;
 }
 
-float MBoard::readVoltage0db( int ivalue ) {
-  return -0.00000001f * ivalue * ivalue   //(float)pow( ivalue, 2 )
-        + 0.00191662f * ivalue        //(float)ivalue
-        + 0.58680987f;
+// float MBoard::readVoltage0db( int ivalue ) {
+//   return -0.00000001f * ivalue * ivalue   //(float)pow( ivalue, 2 )
+//         + 0.00191662f * ivalue        //(float)ivalue
+//         + 0.58680987f;
+// }
+
+// void MBoard::calcVoltage( float volt ) {
+//     float fvalue = ( volt * voltageMultiplier + voltageOffset ) - abs( current ) * wiresResistance;
+//     if( fvalue <= 0.8f ) { fvalue = 0.0f; }
+//     voltage = fvalue;
+// }
+
+void MBoard::calcVoltage( int32_t mvolt )
+{
+  voltage = float( mvolt ) / 1000.0;
 }
 
-void MBoard::calcVoltage( float volt ) {
-    float fvalue = ( volt * voltageMultiplier + voltageOffset ) - abs( current ) * wiresResistance;
-    if( fvalue <= 0.8f ) { fvalue = 0.0f; }
-    voltage = fvalue;
+// void MBoard::calcCurrent( int ivalue ) {
+// #ifndef V22    
+//     current = ( readVoltage( ivalue ) * acs712Multiplier + acs712Offset ) * currentMultiplier + currentOffset;
+// #endif
+// #ifdef V43
+//     current = -( readVoltage( ivalue ) * acs712Multiplier + acs712Offset ) * currentMultiplier + currentOffset;
+//  //  Serial.println( current );
+// #endif
+// }
+
+void MBoard::calcCurrent( int32_t mamper )
+{
+  current = float( mamper ) / 1000.0; 
 }
 
-void MBoard::calcCurrent( int ivalue ) {
-#ifndef V22    
-    current = ( readVoltage( ivalue ) * acs712Multiplier + acs712Offset ) * currentMultiplier + currentOffset;
-#endif
-#ifdef V43
-    current = -( readVoltage( ivalue ) * acs712Multiplier + acs712Offset ) * currentMultiplier + currentOffset;
- //  Serial.println( current );
-#endif
-}
 
 void MBoard::setVoltage(float _voltage) { voltage = _voltage; }
 void MBoard::setCurrent(float _current) { current = _current; }
